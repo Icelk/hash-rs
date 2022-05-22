@@ -5,6 +5,9 @@ authors = ["Alexis Beingessner <a.beingessner@gmail.com>"]
 
 [dependencies]
 twox-hash = "*"
+xxhash-rust = { version = "=0.8.5", features = ["xxh64", "xxh3"] }
+seahash = "=4.1.0"
+highway = "=0.8"
 # murmurhash64 = "*"
 murmurhash3 = "*"
 fnv = "*"

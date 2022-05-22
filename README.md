@@ -1,11 +1,13 @@
 # hash-rs
 
-Benchmarks of various hashers: https://cdn.rawgit.com/Gankro/hash-rs/7b9cf787a830c1e52dcaf6ec37d2985c8a30bce1/index.html
+> Forked from [Gankra/hash-rs](https://github.com/Gankra/hash-rs) to add more hashes.
+
+To view the results, clone this repository, run `node index.js` and go to [localhost:8082](http://localhost:8082).
 
 To build the results, run `cargo run` (this will in turn run Cargo bench in the background).
 This will produce some csv's that index.html will consume.
 
-Currently only Sip, Fx, Fnv, and XX are supported. Other hasher crates were in an inappropriate state.
+Currently Sip, Fx, Fnv, XXH3 (`twox_hash`, `xxhash-rust`), XXHash64, HighwayHash, and SeaHash are supported. Other hasher crates were in an inappropriate state.
 Patches to change this welcome!
 
 This does not necessarily reflect the quality of the algorithms themselves, but rather the performance
