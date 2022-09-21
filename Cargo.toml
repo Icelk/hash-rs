@@ -1,6 +1,7 @@
 [package]
 name = "hash-rs"
 version = "0.1.0"
+edition = "2021"
 authors = ["Alexis Beingessner <a.beingessner@gmail.com>"]
 
 [dependencies]
@@ -15,3 +16,4 @@ regex = "1.1.2"
 rand = "0.6.5"
 ahash = "*"
 rustc-hash = "*"
+blake3 = "1.3.1"

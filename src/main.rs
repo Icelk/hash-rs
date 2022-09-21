@@ -1,27 +1,28 @@
 #![feature(test)]
 #![allow(unused_imports, dead_code)]
 
-extern crate twox_hash;
-extern crate xxhash_rust;
-extern crate seahash;
-extern crate highway;
-extern crate ahash as _ahash;
-extern crate blake2_rfc;
-extern crate fnv as _fnv;
-extern crate murmurhash3;
-extern crate rand;
-extern crate regex;
-extern crate rustc_hash;
-extern crate test;
-
 use regex::Regex;
 use std::fs::File;
 use std::io::stdout;
 use std::io::Result as IoResult;
 use std::process::{Command, Stdio};
+extern crate test;
 
 use std::collections::HashMap;
 use std::io::prelude::*;
+
+#[derive(Debug, Default)]
+struct Blake3(blake3::Hasher);
+impl std::hash::Hasher for Blake3 {
+    fn write(&mut self, bytes: &[u8]) {
+        self.0.update(bytes);
+    }
+    fn finish(&self) -> u64 {
+        let mut s = [0; 8];
+        s.copy_from_slice(&self.0.finalize().as_bytes()[..8]);
+        u64::from_le_bytes(s)
+    }
+}
 
 #[cfg(not(test))]
 fn main() {
@@ -146,19 +147,20 @@ fn do_it() -> IoResult<()> {
 #[cfg(test)]
 macro_rules! hash_benches {
     ($Impl: ty) => {
-        use _ahash::AHasher as AHash;
-        use std::collections::hash_map::DefaultHasher as Sip13;
-        use twox_hash::xxh3::Hash64 as Xx;
-        use xxhash_rust::xxh64::Xxh64 as XxRs64;
-        use xxhash_rust::xxh3::Xxh3 as XxRs;
-        use _fnv::FnvHasher as Fnv;
+        use super::Blake3;
+        use ahash::AHasher as AHash;
         use blake2_rfc::blake2b::Blake2b;
         use blake2_rfc::blake2s::Blake2s;
+        use fnv::FnvHasher as Fnv;
+        use highway::HighwayHasher;
         use rustc_hash::FxHasher;
+        use seahash::SeaHasher;
+        use std::collections::hash_map::DefaultHasher as Sip13;
         use std::hash::Hasher;
         use std::hash::{BuildHasher, BuildHasherDefault};
-        use seahash::SeaHasher;
-        use highway::HighwayHasher;
+        use twox_hash::xxh3::Hash64 as Xx;
+        use xxhash_rust::xxh3::Xxh3 as XxRs;
+        use xxhash_rust::xxh64::Xxh64 as XxRs64;
 
         use std::collections::HashMap;
         use test::{black_box, Bencher};
@@ -550,6 +552,10 @@ mod sea_hash {
 #[cfg(test)]
 mod highway_hash {
     hash_benches! {HighwayHasher}
+}
+#[cfg(test)]
+mod blake3_hash {
+    hash_benches! {Blake3}
 }
 
 // one day?
